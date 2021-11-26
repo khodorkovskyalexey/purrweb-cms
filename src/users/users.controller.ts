@@ -7,7 +7,7 @@ import { UpdateUserDto } from './dtos/update-user.dto';
 import { HashPasswordGuard } from './guards/hash-password.guard';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { UniqueEmailGuard } from './guards/unique-email.guard';
-import { User } from './users.entity';
+import { User } from './entities/users.entity';
 import { UsersService } from './users.service';
 
 @ApiTags('User module')

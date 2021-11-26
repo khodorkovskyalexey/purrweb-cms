@@ -5,7 +5,7 @@ import { Repository } from 'typeorm';
 import { AuthService } from './auth.service';
 import { AuthUsersDto } from './dtos/auth-user.dto';
 import { CreateUserDto } from './dtos/create-user.dto';
-import { User } from './users.entity';
+import { User } from './entities/users.entity';
 import * as bcrypt from 'bcryptjs';
 import { AuthException } from 'src/exceptions/auth.exception';
 
