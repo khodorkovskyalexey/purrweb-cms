@@ -1,10 +1,10 @@
 import { AuthTokensDto } from "./auth-tokens.dto"
-import { CreateUserDto } from "./create-user.dto"
+import { UserDto } from "./user.dto";
 
-export class AuthUsersDto extends CreateUserDto {
+export class AuthUsersDto extends UserDto {
     tokens: AuthTokensDto;
 
-    constructor(user: CreateUserDto, tokens: AuthTokensDto) {
+    constructor(user: UserDto, tokens: AuthTokensDto) {
         super(user)
         this.tokens = tokens
     }

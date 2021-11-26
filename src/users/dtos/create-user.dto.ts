@@ -1,21 +1,17 @@
 import { CrudValidationGroups } from "@nestjsx/crud";
-import { IsEmail, IsNotEmpty, IsOptional, IsString } from "class-validator";
+import { IsEmail, IsNotEmpty, IsString } from "class-validator";
+import { UpdateUserDto } from "./update-user.dto";
 
-const { CREATE, UPDATE } = CrudValidationGroups;
+const { CREATE } = CrudValidationGroups;
 
-export class CreateUserDto {
+export class CreateUserDto extends UpdateUserDto{
     @IsNotEmpty({ groups: [CREATE] })
     @IsString({ always: true })
     @IsEmail({ always: true })
     email: string;
 
-    @IsOptional({ groups: [UPDATE] })
-    @IsNotEmpty({ groups: [CREATE] })
-    @IsString({ always: true })
-    password: string;
-
     constructor(model: any = {}) {
+        super(model);
         this.email = model.email;
-        this.password = model.password;
     }
 }
