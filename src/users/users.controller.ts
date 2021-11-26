@@ -12,15 +12,15 @@ import { UsersService } from './users.service';
 
 @ApiTags('User module')
 @Crud({
+    model: {
+        type: User,
+    },
     params: {
         user_id: {
             field: 'id',
             type: 'number',
             primary: true,
         }
-    },
-    model: {
-        type: User,
     },
     dto: {
         create: CreateUserDto,
@@ -46,10 +46,6 @@ import { UsersService } from './users.service';
 @Controller('users')
 export class UsersController implements CrudController<User> {
     constructor(public service: UsersService) {}
-
-    get base(): CrudController<User> {
-        return this;
-    }
     
     @ApiOperation({ summary: 'Login' })
     @ApiResponse({ status: 200, type: [AuthUsersDto] })
