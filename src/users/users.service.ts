@@ -18,24 +18,16 @@ export class UsersService extends TypeOrmCrudService<User> {
         super(repo);
     }
 
-    async login(userDto: CreateUserDto): Promise<AuthUsersDto> {
-        const user = await this.repo.findOne({ where: { email: userDto.email } });
-        const isPasswordEquals = await bcrypt.compare(userDto.password, user.password);
+    async findByEmail(email: string): Promise<User> {
+        return await this.repo.findOne({ where: { email } });
+    }
+
+    async login(reqUserDto: CreateUserDto): Promise<AuthUsersDto> {
+        const user = await this.findByEmail(reqUserDto.email);
+        const isPasswordEquals = await bcrypt.compare(reqUserDto.password, user.password);
         if(user && isPasswordEquals) {
             return this.authService.generateResponse(user);
         }
         throw AuthException.UnauthorizedError();
-    }
-
-    async register(userDto: CreateUserDto): Promise<AuthUsersDto> {
-        const candidate = await this.repo.findOne({ where: { email: userDto.email } });
-        if(candidate) {
-            throw AuthException.BadRequest(`User with email: ${userDto.email} already exists`);
-        }
-
-        const user = await this.repo.create(userDto);
-        await this.repo.save(user);
-        
-        return this.authService.generateResponse(user);
     }
 }
