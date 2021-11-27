@@ -1,11 +1,13 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from './users/users.module';
+import { EventsModule } from './events/events.module';
 
 @Module({
   imports: [
     TypeOrmModule.forRoot(),
-    UsersModule
+    UsersModule,
+    EventsModule
   ],
   controllers: [],
   providers: [],

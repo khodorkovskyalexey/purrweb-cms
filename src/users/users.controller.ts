@@ -5,10 +5,11 @@ import { AuthUsersDto } from './dtos/auth-user.dto';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { UpdateUserDto } from './dtos/update-user.dto';
 import { HashPasswordGuard } from './guards/hash-password.guard';
-import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { UniqueEmailGuard } from './guards/unique-email.guard';
 import { User } from './entities/users.entity';
 import { UsersService } from './users.service';
+import { VerificationUserGuard } from './guards/verification-user.guard';
+import { JwtAuthGuard } from 'src/guards/jwt-auth.guard';
 
 @ApiTags('User module')
 @Crud({
@@ -30,16 +31,23 @@ import { UsersService } from './users.service';
     routes: {
         exclude: ['createManyBase'],
         replaceOneBase: {
-            decorators: [UseGuards(JwtAuthGuard ,HashPasswordGuard)],
+            decorators: [UseGuards(JwtAuthGuard, VerificationUserGuard ,HashPasswordGuard)],
         },
         updateOneBase: {
-            decorators: [UseGuards(JwtAuthGuard ,HashPasswordGuard)],
+            decorators: [UseGuards(JwtAuthGuard, VerificationUserGuard ,HashPasswordGuard)],
         },
         createOneBase: {
             decorators: [UseGuards(UniqueEmailGuard, HashPasswordGuard)],
         },
         deleteOneBase: {
-            decorators: [UseGuards(JwtAuthGuard)],
+            decorators: [UseGuards(JwtAuthGuard, VerificationUserGuard)],
+        }
+    },
+    query: {
+        join: {
+            events: {
+                eager: true
+            }
         }
     }
 })

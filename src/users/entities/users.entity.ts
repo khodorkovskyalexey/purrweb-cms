@@ -1,5 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Event } from "src/events/entities/event.entity"
 
 @Entity()
 export class User {
@@ -14,4 +15,7 @@ export class User {
     @ApiProperty({ example: '$2a$10$Oz5ndu.h50cJldGyko5OiO2fTeOrKsJrVLKYHvPIan8F8pl/54n1y', description: 'Hash password' })
     @Column({ nullable: false})
     password: string;
+
+    @OneToMany(type => Event, events => events.user, { cascade: true })
+    events: Event[];
 }
