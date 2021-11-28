@@ -1,6 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
+import { Screen } from "src/screens/entities/Screen.entity";
 import { User } from "src/users/entities/users.entity";
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 export class Event {
@@ -14,4 +15,7 @@ export class Event {
 
     @ManyToOne(type => User, user => user.events, { onDelete: 'CASCADE' })
     user: User;
+
+    @OneToMany(type => Screen, screens => screens.event, { cascade: true })
+    screens: Screen[];
 }
