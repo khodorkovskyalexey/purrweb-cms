@@ -44,13 +44,16 @@ import { SetUserGuard } from './guards/set-user.guard';
         field: 'id',
         type: 'number',
         primary: true,
-    },
+    }
   },
   query: {
     join: {
       user: {
         eager: true
-      }
+      },
+      screens: {
+        eager: true
+      },
     }
   }
 })
