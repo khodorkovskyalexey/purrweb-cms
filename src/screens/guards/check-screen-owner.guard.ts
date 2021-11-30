@@ -17,7 +17,7 @@ export class CheckScreenOwnerGuard extends CheckEventOwnerGuard implements CanAc
     async canActivate(context: ExecutionContext) {
         const req = context.switchToHttp().getRequest();
         try {
-            const { screen_id } = req.params;
+            const screen_id = req.params?.screen_id || req.body?.screen_id;
             if(screen_id) {
                 const screen: Screen = await this.screensService.findOne(screen_id, { relations: ['event'] });
                 if(!screen?.event) {
