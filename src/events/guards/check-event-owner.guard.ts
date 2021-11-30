@@ -11,7 +11,7 @@ export class CheckEventOwnerGuard implements CanActivate {
         const req = context.switchToHttp().getRequest();
 
         try {
-            const event_id = req.params?.event_id || req.body.event_id;
+            const event_id = req.params?.event_id || req.body?.event_id;
             const event: Event = await this.eventsService.findOne(event_id, { relations: ['user'] });
             const owner_id: number = Number(event.user.id);
 
