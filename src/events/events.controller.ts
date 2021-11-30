@@ -6,7 +6,7 @@ import { CreateEventDto } from './dto/create-event.dto';
 import { UpdateEventDto } from './dto/update-event.dto';
 import { Event } from './entities/event.entity';
 import { EventsService } from './events.service';
-import { CheckOwnerGuard } from './guards/check-owner.guard';
+import { CheckEventOwnerGuard } from './guards/check-event-owner.guard';
 import { SetUserGuard } from './guards/set-user.guard';
 
 @ApiTags('Event module')
@@ -27,16 +27,16 @@ import { SetUserGuard } from './guards/set-user.guard';
       decorators: [UseGuards(JwtAuthGuard, SetUserGuard)]
     },
     deleteOneBase: {
-      decorators: [UseGuards(JwtAuthGuard, CheckOwnerGuard)]
+      decorators: [UseGuards(JwtAuthGuard, CheckEventOwnerGuard)]
     },
     recoverOneBase: {
-      decorators: [UseGuards(JwtAuthGuard, CheckOwnerGuard)]
+      decorators: [UseGuards(JwtAuthGuard, CheckEventOwnerGuard)]
     },
     updateOneBase: {
-      decorators: [UseGuards(JwtAuthGuard, CheckOwnerGuard)]
+      decorators: [UseGuards(JwtAuthGuard, CheckEventOwnerGuard)]
     },
     replaceOneBase: {
-      decorators: [UseGuards(JwtAuthGuard, CheckOwnerGuard)]
+      decorators: [UseGuards(JwtAuthGuard, CheckEventOwnerGuard)]
     },
   },
   params: {

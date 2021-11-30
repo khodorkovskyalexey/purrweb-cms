@@ -5,7 +5,7 @@ import { JwtAuthGuard } from "src/guards/jwt-auth.guard";
 import { CreateScreenDto } from "./dtos/create-screen.dto";
 import { UpdateScreenDto } from "./dtos/update-screen.dto";
 import { Screen } from "./entities/Screen.entity";
-import { CheckOwnerGuard } from "./guards/check-owner.guard";
+import { CheckScreenOwnerGuard } from "./guards/check-screen-owner.guard";
 import { ScreensService } from "./screens.service";
 
 @ApiTags('Screen module')
@@ -20,22 +20,22 @@ import { ScreensService } from "./screens.service";
   },
   routes: {
     createOneBase: {
-      decorators: [UseGuards(JwtAuthGuard, CheckOwnerGuard)],
+      decorators: [UseGuards(JwtAuthGuard, CheckScreenOwnerGuard)],
     },
     createManyBase: {
-      decorators: [UseGuards(JwtAuthGuard, CheckOwnerGuard)],
+      decorators: [UseGuards(JwtAuthGuard, CheckScreenOwnerGuard)],
     },
     deleteOneBase: {
-      decorators: [UseGuards(JwtAuthGuard, CheckOwnerGuard)],
+      decorators: [UseGuards(JwtAuthGuard, CheckScreenOwnerGuard)],
     },
     updateOneBase: {
-      decorators: [UseGuards(JwtAuthGuard, CheckOwnerGuard)],
+      decorators: [UseGuards(JwtAuthGuard, CheckScreenOwnerGuard)],
     },
     replaceOneBase: {
-      decorators: [UseGuards(JwtAuthGuard, CheckOwnerGuard)],
+      decorators: [UseGuards(JwtAuthGuard, CheckScreenOwnerGuard)],
     },
     recoverOneBase: {
-      decorators: [UseGuards(JwtAuthGuard, CheckOwnerGuard)],
+      decorators: [UseGuards(JwtAuthGuard, CheckScreenOwnerGuard)],
     },
   },
   params: {
