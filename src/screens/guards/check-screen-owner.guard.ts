@@ -25,7 +25,7 @@ export class CheckScreenOwnerGuard extends CheckEventOwnerGuard implements CanAc
                     return true;
                 }
 
-                req.params.event_id = screen.event.id;
+                req.body.event_id = screen.event.id;
                 return await super.canActivate(context);
             } else {
                 const event_id = Number(req.body?.event?.id);
