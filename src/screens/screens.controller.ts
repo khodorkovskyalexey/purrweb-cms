@@ -48,10 +48,13 @@ import { ScreensService } from "./screens.service";
   query: {
     join: {
       event: {
-        eager: true
+        eager: true,
       },
-    }
-  }
+      playlist: {
+        eager: true,
+      },
+    },
+  },
 })
 @Controller('screens')
 export class ScreensController implements CrudController<Screen> {
