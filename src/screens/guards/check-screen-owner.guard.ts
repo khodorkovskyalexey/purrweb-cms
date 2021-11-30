@@ -19,8 +19,7 @@ export class CheckScreenOwnerGuard extends CheckEventOwnerGuard implements CanAc
         try {
             const { screen_id } = req.params;
             if(screen_id) {
-                const screen: Screen = await this.screensService.findOne(screen_id, { select: ['event'] });
-                
+                const screen: Screen = await this.screensService.findOne(screen_id, { relations: ['event'] });
                 if(!screen?.event) {
                     return true;
                 }
