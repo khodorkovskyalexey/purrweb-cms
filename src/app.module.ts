@@ -5,6 +5,7 @@ import { EventsModule } from './events/events.module';
 import { ScreensModule } from './screens/screens.module';
 import { ContentsModule } from './contents/contents.module';
 import { PlaylistsModule } from './playlists/playlists.module';
+import { OrderModule } from './orders/orders.module';
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { PlaylistsModule } from './playlists/playlists.module';
     EventsModule,
     ScreensModule,
     PlaylistsModule,
+    OrderModule,
     ContentsModule
   ],
   controllers: [],

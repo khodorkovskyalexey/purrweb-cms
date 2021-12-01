@@ -1,5 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Order } from "src/orders/entities/order.entity";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 export class Content {
@@ -18,4 +19,7 @@ export class Content {
     @ApiProperty({ example: '.jpg', description: 'Duration of file' })
     @Column({ default: 0 })
     duration: number;
+
+    @OneToMany(type => Order, orders => orders.content, { cascade: true })
+    orders: Order[];
 }

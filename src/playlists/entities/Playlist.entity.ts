@@ -1,6 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
+import { Order } from "src/orders/entities/order.entity";
 import { Screen } from "src/screens/entities/Screen.entity";
-import { Column, Entity, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 export class Playlist {
@@ -14,4 +15,7 @@ export class Playlist {
 
     @OneToOne(type => Screen, screen => screen.playlist, { onDelete: 'CASCADE' })
     screen: Screen;
+
+    @OneToMany(type => Order, orders => orders.playlist, { cascade: true })
+    orders: Order[];
 }
