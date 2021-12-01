@@ -5,6 +5,7 @@ import { MulterModule } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { Content } from './entities/content.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { OrderModule } from 'src/orders/orders.module';
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       destination: 'uploads',
       filename: (req, file, cb) => cb(null, file.fieldname + '-' + Date.now() + '-' + file.originalname)
     })}),
+    OrderModule,
   ],
   controllers: [ContentsController],
   providers: [ContentsService],
