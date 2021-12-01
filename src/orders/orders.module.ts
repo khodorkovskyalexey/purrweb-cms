@@ -11,6 +11,10 @@ import { OrdersService } from "./orders.service";
 @Module({
     imports: [
         TypeOrmModule.forFeature([Order]),
+        PlaylistsModule,
+        ScreensModule,
+        EventsModule,
+        UsersModule,
     ],
     controllers: [OrdersController],
     providers: [OrdersService],

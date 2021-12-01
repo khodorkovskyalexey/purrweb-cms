@@ -20,7 +20,7 @@ export class CheckPlaylistOwnerGuard extends CheckScreenOwnerGuard implements Ca
         const req = context.switchToHttp().getRequest();
 
         try {
-            const { playlist_id } = req.params;
+            const playlist_id = req.params?.playlist_id || req.body?.playlist_id;
             
             if(playlist_id) {
                 const playlist: Playlist = await this.playlistsService.findOne(playlist_id, { relations: ['screen'] });
@@ -34,7 +34,7 @@ export class CheckPlaylistOwnerGuard extends CheckScreenOwnerGuard implements Ca
             } else {
                 const screen_id = Number(req.body?.screen?.id);
         
-                if(!screen_id) {
+                if(!screen_id) {                   
                     return true;
                 }
 
