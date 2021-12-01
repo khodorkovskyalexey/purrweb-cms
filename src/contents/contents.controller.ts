@@ -1,5 +1,6 @@
 import { Controller, UseInterceptors, UploadedFiles, Post, UploadedFile, Body } from '@nestjs/common';
 import { AnyFilesInterceptor, FileInterceptor } from '@nestjs/platform-express';
+import { ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { Crud, CrudController, Override } from '@nestjsx/crud';
 import { OrdersService } from 'src/orders/orders.service';
 import { ContentsService } from './contents.service';
@@ -32,14 +33,16 @@ import { Content } from './entities/content.entity';
     }
   }
 })
+@ApiTags('Content module')
 @Controller('contents')
 export class ContentsController implements CrudController<Content> {
   constructor(
     public readonly service: ContentsService,
     public readonly ordersService: OrdersService
   ) {}
-
+  
   @Override('createManyBase')
+  @ApiConsumes('multipart/form-data')
   @Post()
   @UseInterceptors(AnyFilesInterceptor())
   async uploadFiles(
@@ -55,6 +58,7 @@ export class ContentsController implements CrudController<Content> {
   }
 
   @Override('createOneBase')
+  @ApiConsumes('multipart/form-data')
   @Post()
   @UseInterceptors(FileInterceptor('file'))
   async uploadFile(

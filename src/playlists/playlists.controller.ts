@@ -1,4 +1,5 @@
 import { Controller, UseGuards } from "@nestjs/common";
+import { ApiTags } from "@nestjs/swagger";
 import { Crud, CrudController } from "@nestjsx/crud";
 import { JwtAuthGuard } from "src/guards/jwt-auth.guard";
 import { CreatePlaylistDto } from "./dtos/create-playlist.dto";
@@ -46,6 +47,7 @@ import { PlaylistsService } from "./playlists.service";
         },
     },
 })
+@ApiTags('Playlist module')
 @Controller('playlists')
 export class PlaylistsController implements CrudController<Playlist> {
     constructor(public service: PlaylistsService) {}

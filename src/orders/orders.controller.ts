@@ -1,4 +1,5 @@
 import { Controller, UseGuards } from "@nestjs/common";
+import { ApiTags } from "@nestjs/swagger";
 import { Crud, CrudController } from "@nestjsx/crud";
 import { JwtAuthGuard } from "src/guards/jwt-auth.guard";
 import { CreateOrderDto } from "./dtos/create-order.dto";
@@ -46,6 +47,7 @@ import { OrdersService } from "./orders.service";
         },
     },
 })
+@ApiTags('Order module')
 @Controller('orders')
 export class OrdersController implements CrudController<Order> {
     constructor(public service: OrdersService) {}
