@@ -18,6 +18,10 @@ export class OrdersService extends TypeOrmCrudService<Order> {
   }
 
   async createArray(orderDto: ContentInBodyDto, content_ids: Array<number>): Promise<Order[]> {
-    return await Promise.all(content_ids.map(async content_id => await this.create({ ...orderDto, content_id })));
+    orderDto.order--;
+    return await Promise.all(content_ids.map(async content_id => {
+      orderDto.order++;
+      return await this.create({ ...orderDto, content_id })
+    }));
   }
 }
