@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsNumber, IsOptional, IsString } from "class-validator";
+import { IsNumber, IsOptional } from "class-validator";
 import { CreateOrderDto } from "src/orders/dtos/create-order.dto";
 
 export class ContentInBodyDto extends CreateOrderDto {

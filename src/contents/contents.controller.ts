@@ -1,7 +1,9 @@
-import { Controller, UseInterceptors, UploadedFiles, Post, UploadedFile, Body } from '@nestjs/common';
+import { Controller, UseInterceptors, UploadedFiles, Post, UploadedFile, Body, Param } from '@nestjs/common';
 import { AnyFilesInterceptor, FileInterceptor } from '@nestjs/platform-express';
-import { ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiConsumes, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Crud, CrudController, Override } from '@nestjsx/crud';
+import { CreateOrderDto } from 'src/orders/dtos/create-order.dto';
+import { Order } from 'src/orders/entities/order.entity';
 import { OrdersService } from 'src/orders/orders.service';
 import { ContentsService } from './contents.service';
 import { ContentInBodyDto } from './dto/content-in-body.dto';
@@ -71,5 +73,18 @@ export class ContentsController implements CrudController<Content> {
     const createdOrder = await this.ordersService.create(contentData);
     
     return { ...createdContent, order: createdOrder }
+  }
+
+  @ApiParam({ name: 'playlist_id', description: 'Playlist id', example: '1' })
+  @ApiParam({ name: 'content_id', description: 'Content id', example: '1' })
+  @ApiOperation({ summary: 'Set content in playlist' })
+  @ApiResponse({ status: 200, type: Order })
+  @Post(':content_id/playlists/:playlist_id')
+  async setContent(
+      @Body() orderDto: CreateOrderDto, 
+      @Param('playlist_id') playlist_id: string, 
+      @Param('content_id') content_id: string
+  ): Promise<Order> {
+      return this.service.setContent(playlist_id, content_id, orderDto);
   }
 }
