@@ -12,11 +12,11 @@ export class Content {
     @Column()
     url: string;
 
-    @ApiProperty({ example: '0', description: 'File extension' })
+    @ApiProperty({ example: '.jpg', description: 'File extension' })
     @Column()
     extension: string;
 
-    @ApiProperty({ example: '.jpg', description: 'Duration of file' })
+    @ApiProperty({ example: '0', description: 'Duration of file' })
     @Column({ default: 0 })
     duration: number;
 
