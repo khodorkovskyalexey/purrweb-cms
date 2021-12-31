@@ -2,7 +2,7 @@ import { ApiProperty } from "@nestjs/swagger";
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Event } from "src/events/entities/event.entity"
 
-@Entity()
+@Entity({ name: "user" })
 export class User {
     @ApiProperty({ example: '1', description: 'User id' })
     @PrimaryGeneratedColumn()

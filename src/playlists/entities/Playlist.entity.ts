@@ -3,7 +3,7 @@ import { Order } from "src/orders/entities/order.entity";
 import { Screen } from "src/screens/entities/Screen.entity";
 import { Column, Entity, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 
-@Entity()
+@Entity({ name: "playlist" })
 export class Playlist {
     @ApiProperty({ example: '1', description: 'Playlist id' })
     @PrimaryGeneratedColumn()
