@@ -16,12 +16,4 @@ export class OrdersService extends TypeOrmCrudService<Order> {
     await this.repo.save(createdOrder);
     return createdOrder;
   }
-
-  async createArray(orderDto: ContentInBodyDto, content_ids: Array<number>): Promise<Order[]> {
-    orderDto.order--;
-    return await Promise.all(content_ids.map(async content_id => {
-      orderDto.order++;
-      return await this.create({ ...orderDto, content_id })
-    }));
-  }
 }
