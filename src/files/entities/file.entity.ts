@@ -8,13 +8,17 @@ export class File {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @ApiProperty({ example: 'uploads\\file-1638106381562-a1.jpg', description: 'Url to file' })
+    @ApiProperty({ example: 'https://cms-screen-bucket.s3.ap-northeast-1.amazonaws.com/c4d09436-7e5e-428e-a5b5-510c8c4ca63e-uploadfile.jpg', description: 'Url to file' })
     @Column()
     url: string;
 
     @ApiProperty({ example: '.jpg', description: 'File extension' })
     @Column()
     extension: string;
+
+    @ApiProperty({ example: 'c4d09436-7e5e-428e-a5b5-510c8c4ca63e-uploadfile.jpg', description: 'File key in aws s3' })
+    @Column()
+    key: string;
 
     @ManyToOne(type => Content, content => content.files, { onDelete: "CASCADE" })
     @JoinColumn({ name: 'contentid' })

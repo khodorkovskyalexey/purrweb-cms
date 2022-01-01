@@ -5,6 +5,8 @@ import { Content } from "src/contents/entities/content.entity";
 import { Repository } from "typeorm";
 import { CreateFileDto } from "./dto/create-file.dto";
 import { File } from "./entities/file.entity";
+import { S3 } from 'aws-sdk';
+import { v4 as uuid } from 'uuid';
 
 @Injectable()
 export class FilesService extends TypeOrmCrudService<File> {
@@ -14,8 +16,22 @@ export class FilesService extends TypeOrmCrudService<File> {
     super(repo);
   }
 
-  async create(fileDto: CreateFileDto, content: Content): Promise<File> {
-    const createdFile: File = await this.repo.create({ ...fileDto, content: { id: content.id } });
+  async create(file: CreateFileDto, content: Content): Promise<File> {
+    console.log(file.fileBuffer);
+    
+    const s3 = new S3();
+    const uploadResult = await s3.upload({
+      Bucket: process.env.AWS_PUBLIC_BUCKET_NAME,
+      Body: file.fileBuffer,
+      Key: `${uuid()}-${file.fileName}`
+    }).promise();
+
+    const createdFile: File = await this.repo.create({
+      url: uploadResult.Location,
+      key: uploadResult.Key,
+      extension: file.extension,
+      content: { id: content.id }
+    });
     await this.repo.save(createdFile);
     return createdFile;
   }

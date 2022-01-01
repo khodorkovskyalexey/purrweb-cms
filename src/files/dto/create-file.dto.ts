@@ -1,24 +1,28 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { IsString } from "class-validator";
-import { Column } from "typeorm";
 
 export class CreateFileDto {
-    @ApiProperty({ example: 'uploads\\file-1638106381562-a1.jpg', description: 'Url to file' })
+    @ApiProperty({ description: 'Url to file' })
+    fileBuffer: Buffer;
+
+    @ApiProperty({ example: 'uploadfile.jpg', description: 'Url to file' })
     @IsString()
-    url: string;
+    fileName: string;
 
     @ApiProperty({ example: '.jpg', description: 'File extension' })
-    @Column()
+    @IsString()
     extension: string;
 
     constructor(model: any = {}) {
-        this.url = model.url;
+        this.fileBuffer = model.fileBuffer;
+        this.fileName = model.fileName;
         this.extension = model.extension;
     }
 
     public static parseFile(file: Express.Multer.File): CreateFileDto {
         const model = {
-            url: file.path,
+            fileBuffer: file.buffer,
+            fileName: file.originalname,
             extension: file.originalname.substring(file.originalname.lastIndexOf('.'), file.originalname.length),
         }
         return new CreateFileDto(model);
