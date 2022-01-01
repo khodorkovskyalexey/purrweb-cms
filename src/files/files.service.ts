@@ -17,8 +17,6 @@ export class FilesService extends TypeOrmCrudService<File> {
   }
 
   async create(file: CreateFileDto, content: Content): Promise<File> {
-    console.log(file.fileBuffer);
-    
     const s3 = new S3();
     const uploadResult = await s3.upload({
       Bucket: process.env.AWS_PUBLIC_BUCKET_NAME,
