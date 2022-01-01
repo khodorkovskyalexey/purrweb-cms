@@ -2,7 +2,7 @@ import { ApiProperty } from "@nestjs/swagger";
 import { IsString } from "class-validator";
 
 export class CreateFileDto {
-    @ApiProperty({ description: 'Url to file' })
+    @ApiProperty({ example: '<Buffer ff d8 ff e0 00 10 4a 46 49 46 00 01 02 01 00>', description: 'Url to file' })
     fileBuffer: Buffer;
 
     @ApiProperty({ example: 'uploadfile.jpg', description: 'Url to file' })
