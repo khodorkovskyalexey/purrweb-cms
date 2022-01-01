@@ -28,8 +28,12 @@ export class ContentsService extends TypeOrmCrudService<Content> {
     return { createdContent, createdOrder };
   }
 
-  async findById(content_id): Promise<Content> {
-    return await this.repo.findOne(content_id);
+  async findById(content_id: string | number, options = {}): Promise<Content> {
+    return await this.repo.findOne(content_id, options);
+  }
+
+  async delete(content_id: string | number) {
+    return await this.repo.delete(content_id);
   }
 
   async setContent(playlist_id: string, content_id: string, orderDto: CreateOrderDto): Promise<Order> {

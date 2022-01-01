@@ -1,4 +1,4 @@
-import { Controller, UseInterceptors, UploadedFiles, Post, UploadedFile, Body, Param } from '@nestjs/common';
+import { Controller, UseInterceptors, UploadedFiles, Post, UploadedFile, Body, Param, Delete } from '@nestjs/common';
 import { AnyFilesInterceptor, FileInterceptor } from '@nestjs/platform-express';
 import { ApiConsumes, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Crud, CrudController, Override } from '@nestjsx/crud';
@@ -51,6 +51,7 @@ export class ContentsController implements CrudController<Content> {
   
   @Override('createManyBase')
   @ApiConsumes('multipart/form-data')
+  @ApiOperation({ summary: 'Upload some files in new content' })
   @Post()
   @UseInterceptors(AnyFilesInterceptor())
   async uploadFiles(
@@ -70,6 +71,7 @@ export class ContentsController implements CrudController<Content> {
 
   @Override('createOneBase')
   @ApiConsumes('multipart/form-data')
+  @ApiOperation({ summary: 'Upload one file in new content' })
   @Post()
   @UseInterceptors(FileInterceptor('file'))
   async uploadFile(
@@ -87,7 +89,7 @@ export class ContentsController implements CrudController<Content> {
 
   @ApiParam({ name: 'content_id', description: 'Content id', example: '1' })
   @ApiConsumes('multipart/form-data')
-  @ApiOperation({ summary: 'Add file in playlist' })
+  @ApiOperation({ summary: 'Upload one file in exists content' })
   @Post(':content_id')
   @UseInterceptors(FileInterceptor('file'))
   async addFile(
@@ -102,7 +104,7 @@ export class ContentsController implements CrudController<Content> {
 
   @ApiParam({ name: 'content_id', description: 'Content id', example: '1' })
   @ApiConsumes('multipart/form-data')
-  @ApiOperation({ summary: 'Add file in playlist' })
+  @ApiOperation({ summary: 'Upload some files in exists content' })
   @Post(':content_id/bulk')
   @UseInterceptors(AnyFilesInterceptor())
   async addFiles(
@@ -115,6 +117,16 @@ export class ContentsController implements CrudController<Content> {
       filesDto.map(async file => await this.filesService.create(file, content))
     );
     return { ...content, files: createdFiles }
+  }
+
+  @Override('deleteOneBase')
+  @ApiConsumes('multipart/form-data')
+  @ApiOperation({ summary: 'Delete content' })
+  @Delete(':content_id')
+  async deleteOne(@Param('content_id') content_id: string) {
+    const content = await this.service.findById(content_id, { relations: ['files'] });
+    await Promise.all(content.files.map(async file => await this.filesService.delete(file.id)));
+    return await this.service.delete(content_id);
   }
 
   @ApiParam({ name: 'playlist_id', description: 'Playlist id', example: '1' })

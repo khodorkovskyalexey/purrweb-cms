@@ -34,6 +34,16 @@ export class FilesService extends TypeOrmCrudService<File> {
     return createdFile;
   }
 
+  async delete(file_id: string | number): Promise<void> {
+    const file = await this.repo.findOne(file_id);
+    const s3 = new S3();
+    await s3.deleteObject({
+      Bucket: process.env.AWS_PUBLIC_BUCKET_NAME,
+      Key: file.key,
+    }).promise();
+    await this.repo.delete(file_id);
+  }
+
   async createArray(filesDto: Array<CreateFileDto>, content: Content): Promise<File[]> {
     return await Promise.all(filesDto.map(async file => await this.create(file, content)));
   }
