@@ -1,7 +1,7 @@
 import { Controller, UseGuards } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 import { Crud, CrudController, Override } from "@nestjsx/crud";
-import { JwtAuthGuard } from "src/guards/jwt-auth.guard";
+import { JwtAuth0Guard } from "src/guards/jwt-auth0.guard";
 import { CreateScreenDto } from "./dtos/create-screen.dto";
 import { UpdateScreenDto } from "./dtos/update-screen.dto";
 import { Screen } from "./entities/Screen.entity";
@@ -20,22 +20,22 @@ import { ScreensService } from "./screens.service";
   },
   routes: {
     createOneBase: {
-      decorators: [UseGuards(JwtAuthGuard, CheckScreenOwnerGuard)],
+      decorators: [UseGuards(JwtAuth0Guard, CheckScreenOwnerGuard)],
     },
     createManyBase: {
-      decorators: [UseGuards(JwtAuthGuard, CheckScreenOwnerGuard)],
+      decorators: [UseGuards(JwtAuth0Guard, CheckScreenOwnerGuard)],
     },
     deleteOneBase: {
-      decorators: [UseGuards(JwtAuthGuard, CheckScreenOwnerGuard)],
+      decorators: [UseGuards(JwtAuth0Guard, CheckScreenOwnerGuard)],
     },
     updateOneBase: {
-      decorators: [UseGuards(JwtAuthGuard, CheckScreenOwnerGuard)],
+      decorators: [UseGuards(JwtAuth0Guard, CheckScreenOwnerGuard)],
     },
     replaceOneBase: {
-      decorators: [UseGuards(JwtAuthGuard, CheckScreenOwnerGuard)],
+      decorators: [UseGuards(JwtAuth0Guard, CheckScreenOwnerGuard)],
     },
     recoverOneBase: {
-      decorators: [UseGuards(JwtAuthGuard, CheckScreenOwnerGuard)],
+      decorators: [UseGuards(JwtAuth0Guard, CheckScreenOwnerGuard)],
     },
   },
   params: {

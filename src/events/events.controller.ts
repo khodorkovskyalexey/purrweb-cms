@@ -1,7 +1,7 @@
 import { Controller, UseGuards } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { Crud, CrudController } from '@nestjsx/crud';
-import { JwtAuthGuard } from 'src/guards/jwt-auth.guard';
+import { JwtAuth0Guard } from 'src/guards/jwt-auth0.guard';
 import { CreateEventDto } from './dto/create-event.dto';
 import { UpdateEventDto } from './dto/update-event.dto';
 import { Event } from './entities/event.entity';
@@ -21,22 +21,22 @@ import { SetUserGuard } from './guards/set-user.guard';
   },
   routes: {
     createOneBase: {
-      decorators: [UseGuards(JwtAuthGuard, SetUserGuard)]
+      decorators: [UseGuards(JwtAuth0Guard, SetUserGuard)]
     },
     createManyBase: {
-      decorators: [UseGuards(JwtAuthGuard, SetUserGuard)]
+      decorators: [UseGuards(JwtAuth0Guard, SetUserGuard)]
     },
     deleteOneBase: {
-      decorators: [UseGuards(JwtAuthGuard, CheckEventOwnerGuard)]
+      decorators: [UseGuards(JwtAuth0Guard, CheckEventOwnerGuard)]
     },
     recoverOneBase: {
-      decorators: [UseGuards(JwtAuthGuard, CheckEventOwnerGuard)]
+      decorators: [UseGuards(JwtAuth0Guard, CheckEventOwnerGuard)]
     },
     updateOneBase: {
-      decorators: [UseGuards(JwtAuthGuard, CheckEventOwnerGuard)]
+      decorators: [UseGuards(JwtAuth0Guard, CheckEventOwnerGuard)]
     },
     replaceOneBase: {
-      decorators: [UseGuards(JwtAuthGuard, CheckEventOwnerGuard)]
+      decorators: [UseGuards(JwtAuth0Guard, CheckEventOwnerGuard)]
     },
   },
   params: {

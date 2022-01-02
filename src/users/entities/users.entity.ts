@@ -12,9 +12,24 @@ export class User {
     @Column({ nullable: false })
     email: string;
 
-    @ApiProperty({ example: '$2a$10$Oz5ndu.h50cJldGyko5OiO2fTeOrKsJrVLKYHvPIan8F8pl/54n1y', description: 'Hash password' })
-    @Column({ nullable: false})
-    password: string;
+    @ApiProperty({ example: 'true', description: 'Email in verified' })
+    @Column()
+    email_verified: boolean;
+
+    @ApiProperty({
+        example: 'https://s.gravatar.com/avatar/5658ffccee7f0ebfda2b226238b1eb6e?s=480&r=pg&d=https%3A%2F%2Fcdn.auth0.com%2Favatars%2Fem.png',
+        description: 'User avatar'
+    })
+    @Column()
+    picture: string;
+
+    @ApiProperty({ example: 'Aleksandr', description: 'User name' })
+    @Column()
+    name: string;
+
+    @ApiProperty({ example: 'Aleksandr269', description: 'User nickname' })
+    @Column()
+    nickname: string;
 
     @OneToMany(type => Event, events => events.user, { cascade: true })
     events: Event[];

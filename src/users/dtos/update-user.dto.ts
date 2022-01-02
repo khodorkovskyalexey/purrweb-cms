@@ -1,16 +1,17 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { CrudValidationGroups } from "@nestjsx/crud";
-import { IsNotEmpty, IsString } from "class-validator";
-
-const { CREATE } = CrudValidationGroups;
+import { IsString } from "class-validator";
 
 export class UpdateUserDto {
-    @ApiProperty({ example: 'password123', description: 'User password' })
-    @IsNotEmpty({ groups: [CREATE] })
+    @ApiProperty({ example: 'Aleksandr', description: 'User name' })
     @IsString({ always: true })
-    password: string;
+    name: string;
+
+    @ApiProperty({ example: 'Aleksandr269', description: 'User nickname' })
+    @IsString({ always: true })
+    nickname: string;
 
     constructor(model: any = {}) {
-        this.password = model.password;
+        this.name = model.name;
+        this.nickname = model.nickname;
     }
 }

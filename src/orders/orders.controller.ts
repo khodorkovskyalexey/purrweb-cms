@@ -1,7 +1,7 @@
 import { Controller, UseGuards } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 import { Crud, CrudController } from "@nestjsx/crud";
-import { JwtAuthGuard } from "src/guards/jwt-auth.guard";
+import { JwtAuth0Guard } from "src/guards/jwt-auth0.guard";
 import { CreateOrderDto } from "./dtos/create-order.dto";
 import { UpdateOrderDto } from "./dtos/update-order.dto";
 import { Order } from "./entities/order.entity";
@@ -20,13 +20,13 @@ import { OrdersService } from "./orders.service";
     routes: {
         exclude: ['createOneBase', 'createManyBase'],
         updateOneBase: {
-            decorators: [UseGuards(JwtAuthGuard, CheckOrdersOwnerGuard)],
+            decorators: [UseGuards(JwtAuth0Guard, CheckOrdersOwnerGuard)],
         },
         replaceOneBase: {
-            decorators: [UseGuards(JwtAuthGuard, CheckOrdersOwnerGuard)],
+            decorators: [UseGuards(JwtAuth0Guard, CheckOrdersOwnerGuard)],
         },
         deleteOneBase: {
-            decorators: [UseGuards(JwtAuthGuard, CheckOrdersOwnerGuard)],
+            decorators: [UseGuards(JwtAuth0Guard, CheckOrdersOwnerGuard)],
         },
     },
     params: {
