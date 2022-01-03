@@ -3,15 +3,12 @@ import { ApiTags } from '@nestjs/swagger';
 import { Crud, CrudController } from '@nestjsx/crud';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { UpdateUserDto } from './dtos/update-user.dto';
-import { UniqueEmailGuard } from './guards/unique-email.guard';
 import { User } from './entities/users.entity';
 import { UsersService } from './users.service';
 import { VerificationUserGuard } from './guards/verification-user.guard';
 import { Auth0Service } from 'src/auth0/auth0.service';
 import { Request } from 'express';
 import { JwtAuth0Guard } from 'src//guards/jwt-auth0.guard';
-import { UserToReqBodyGuard } from './guards/user-to-req-body.guard';
-import { AuthGuard } from '@nestjs/passport';
 
 @ApiTags('User module')
 @Crud({
@@ -31,16 +28,13 @@ import { AuthGuard } from '@nestjs/passport';
         // replace: UpdateUserDto,
     },
     routes: {
-        exclude: ['createManyBase', 'recoverOneBase', 'deleteOneBase', 'updateOneBase', 'replaceOneBase'],
+        exclude: ['createManyBase', 'createOneBase', 'recoverOneBase', 'deleteOneBase', 'updateOneBase', 'replaceOneBase'],
         // replaceOneBase: {
         //     decorators: [UseGuards(JwtAuthGuard, VerificationUserGuard ,HashPasswordGuard)],
         // },
         // updateOneBase: {
         //     decorators: [UseGuards(JwtAuthGuard, VerificationUserGuard ,HashPasswordGuard)],
         // },
-        createOneBase: {
-            decorators: [UseGuards(JwtAuth0Guard, UserToReqBodyGuard, UniqueEmailGuard)],
-        },
         // deleteOneBase: {
         //     decorators: [UseGuards(JwtAuthGuard, VerificationUserGuard)],
         // }
@@ -57,7 +51,7 @@ import { AuthGuard } from '@nestjs/passport';
 export class UsersController implements CrudController<User> {
     constructor(public service: UsersService, public auth0service: Auth0Service) {}
 
-    @UseGuards(AuthGuard('jwt'))
+    @UseGuards(JwtAuth0Guard)
     @Get('jwt')
     async check(@Req() req: Request) {
         return req.user;

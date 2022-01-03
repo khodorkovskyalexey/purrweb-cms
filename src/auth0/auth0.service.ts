@@ -12,4 +12,9 @@ export class Auth0Service {
         }).toPromise();
         return res.data;
     }
+
+    static getSubId(sub: string): string {
+        const subParsed = sub.split('|');  
+        return subParsed[1];
+    }
 }

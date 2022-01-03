@@ -1,6 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { CrudValidationGroups } from "@nestjsx/crud";
 import { IsBoolean, IsEmail, IsNotEmpty, IsString } from "class-validator";
+import { Auth0Service } from "src/auth0/auth0.service";
 import { UpdateUserDto } from "./update-user.dto";
 
 const { CREATE } = CrudValidationGroups;
@@ -11,6 +12,10 @@ export class CreateUserDto extends UpdateUserDto{
     @IsString({ always: true })
     @IsEmail({ always: true })
     email: string;
+
+    @ApiProperty({ example: '123456', description: 'User id in Auth0 database' })
+    @IsString({ always: true })
+    sub_id: string;
 
     @ApiProperty({ example: 'true', description: 'Email in verified' })
     @IsBoolean({ always: true })
@@ -25,6 +30,7 @@ export class CreateUserDto extends UpdateUserDto{
 
     constructor(model: any = {}) {
         super(model);
+        this.sub_id = model.sub_id || Auth0Service.getSubId(model.sub);
         this.email = model.email;
         this.email_verified = model.email_verified;
         this.picture = model.picture;
