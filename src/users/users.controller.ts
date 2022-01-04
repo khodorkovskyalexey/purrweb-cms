@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Put, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Put, Req, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 import { Crud, CrudController, Override } from '@nestjsx/crud';
 import { UpdateUserDto } from './dtos/update-user.dto';
@@ -26,7 +26,7 @@ import { JwtAuth0Guard } from 'src//guards/jwt-auth0.guard';
         replace: UpdateUserDto,
     },
     routes: {
-        exclude: ['createManyBase', 'createOneBase', 'recoverOneBase'],
+        exclude: ['createManyBase', 'recoverOneBase'],
     },
     query: {
         join: {
@@ -39,6 +39,14 @@ import { JwtAuth0Guard } from 'src//guards/jwt-auth0.guard';
 @Controller('users')
 export class UsersController implements CrudController<User> {
     constructor(public service: UsersService, public auth0service: Auth0Service) {}
+
+    @Override('createOneBase')
+    @ApiOperation({ summary: 'Login in system (add account if not exists, updating data) and get profile finally' })
+    @UseGuards(JwtAuth0Guard)
+    @Post(':user_id')
+    async login(@Req() req: Request) {
+        return req.user;
+    }
 
     @Override('updateOneBase')
     @ApiParam({ name: 'user_id', description: 'Updating user id', example: '1' })
