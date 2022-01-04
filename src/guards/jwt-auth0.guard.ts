@@ -38,8 +38,6 @@ export class JwtAuth0Guard extends AuthGuard('jwt') {
             
             req.user = { id: userFromDB.id, ...user };
         } catch (error) {
-            console.log(error);
-            
             throw AuthException.UnauthorizedError();
         }
         return true;

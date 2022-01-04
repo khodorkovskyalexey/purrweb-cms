@@ -17,8 +17,6 @@ export class Auth0Service {
     async updateUser(sub: string, userDto: UpdateUserDto): Promise<AxiosResponse<any, any>> {
         sub = sub.replace('|', '%7C'); // %7C - is | symbol
         const url = `${process.env.AUTH0_ISSUER_URL}/api/v2/users/${sub}`;
-        console.log(url);
-        
         const res = await this.httpService.patch(url, userDto, {
             headers: { Authorization: `Bearer ${process.env.AUTH0_MGMT_ACCESS_TOKEN}` },
         }).toPromise();
