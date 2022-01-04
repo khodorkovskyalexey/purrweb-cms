@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Patch, Put, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Put, Req, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 import { Crud, CrudController, Override } from '@nestjsx/crud';
 import { UpdateUserDto } from './dtos/update-user.dto';
@@ -27,15 +27,6 @@ import { JwtAuth0Guard } from 'src//guards/jwt-auth0.guard';
     },
     routes: {
         exclude: ['createManyBase', 'createOneBase', 'recoverOneBase'],
-        // replaceOneBase: {
-        //     decorators: [UseGuards(JwtAuth0Guard, VerificationUserGuard)],
-        // },
-        // updateOneBase: {
-        //     decorators: [UseGuards(JwtAuth0Guard, VerificationUserGuard)],
-        // },
-        deleteOneBase: {
-            decorators: [UseGuards(JwtAuth0Guard, VerificationUserGuard)],
-        }
     },
     query: {
         join: {
@@ -72,5 +63,15 @@ export class UsersController implements CrudController<User> {
     @Put(':user_id')
     async replaceUser(@Param('user_id') id: string, @Body() user: UpdateUserDto) {
         return this.updateUser(id, user);
+    }
+
+    @Override('deleteOneBase')
+    @ApiParam({ name: 'user_id', description: 'Deleting user id', example: '1' })
+    @ApiOperation({ summary: 'Delete user' })
+    @UseGuards(JwtAuth0Guard, VerificationUserGuard)
+    @Delete(':user_id')
+    async deleteUser(@Param('user_id') id: string, @Body() user: UpdateUserDto) {
+        const sub_id = await this.service.getSubIdFromUserId(id);
+        return this.service.deleteInAuth0(id, sub_id);
     }
 }

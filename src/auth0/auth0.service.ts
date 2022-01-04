@@ -14,13 +14,20 @@ export class Auth0Service {
         return res.data;
     }
 
-    async updateUser(sub: string, userDto: UpdateUserDto) {
+    async updateUser(sub: string, userDto: UpdateUserDto): Promise<AxiosResponse<any, any>> {
         const url = `${process.env.AUTH0_ISSUER_URL}/api/v2/users/auth0%7C${sub}`;
-        
         const res = await this.httpService.patch(url, userDto, {
             headers: { Authorization: `Bearer ${process.env.AUTH0_MGMT_ACCESS_TOKEN}` },
         }).toPromise();
-        console.log("VSE");
+        
+        return res.data;
+    }
+
+    async deleteUser(sub: string): Promise<AxiosResponse<any, any>> {
+        const url = `${process.env.AUTH0_ISSUER_URL}/api/v2/users/auth0%7C${sub}`;
+        const res = await this.httpService.delete(url, {
+            headers: { Authorization: `Bearer ${process.env.AUTH0_MGMT_ACCESS_TOKEN}` },
+        }).toPromise();
         
         return res.data;
     }

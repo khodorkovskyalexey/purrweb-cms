@@ -23,9 +23,13 @@ export class UsersService extends TypeOrmCrudService<User> {
     }
 
     async updateInAuth0(user_id: string | number, sub: string, userDto: UpdateUserDto) {
-        const res = await this.auth0Service.updateUser(sub, userDto);
-        console.log(res);
+        await this.auth0Service.updateUser(sub, userDto);
         return await this.repo.update(user_id, userDto);
+    }
+
+    async deleteInAuth0(user_id: string | number, sub: string) {
+        await this.auth0Service.deleteUser(sub);
+        return await this.repo.delete(user_id);
     }
 
     async updateFromAuth0(user_id: string | number, userDto: CreateUserDto) {
