@@ -33,7 +33,7 @@ export class JwtAuth0Guard extends AuthGuard('jwt') {
             if(!relevance[0]) {
                 let updateUserData = {};
                 relevance[1].forEach(key => { updateUserData[key] = user[key] });
-                await this.usersService.update(userFromDB.id, updateUserData as CreateUserDto);
+                await this.usersService.updateFromAuth0(userFromDB.id, updateUserData as CreateUserDto);
             }
             
             req.user = { id: userFromDB.id, ...user };

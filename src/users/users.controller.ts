@@ -1,6 +1,6 @@
-import { Controller, Get, Req, UseGuards } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
-import { Crud, CrudController } from '@nestjsx/crud';
+import { Body, Controller, Get, Param, Patch, Put, Req, UseGuards } from '@nestjs/common';
+import { ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
+import { Crud, CrudController, Override } from '@nestjsx/crud';
 import { UpdateUserDto } from './dtos/update-user.dto';
 import { User } from './entities/users.entity';
 import { UsersService } from './users.service';
@@ -27,12 +27,12 @@ import { JwtAuth0Guard } from 'src//guards/jwt-auth0.guard';
     },
     routes: {
         exclude: ['createManyBase', 'createOneBase', 'recoverOneBase'],
-        replaceOneBase: {
-            decorators: [UseGuards(JwtAuth0Guard, VerificationUserGuard)],
-        },
-        updateOneBase: {
-            decorators: [UseGuards(JwtAuth0Guard, VerificationUserGuard)],
-        },
+        // replaceOneBase: {
+        //     decorators: [UseGuards(JwtAuth0Guard, VerificationUserGuard)],
+        // },
+        // updateOneBase: {
+        //     decorators: [UseGuards(JwtAuth0Guard, VerificationUserGuard)],
+        // },
         deleteOneBase: {
             decorators: [UseGuards(JwtAuth0Guard, VerificationUserGuard)],
         }
@@ -53,5 +53,24 @@ export class UsersController implements CrudController<User> {
     @Get('jwt')
     async check(@Req() req: Request) {
         return req.user;
+    }
+
+    @Override('updateOneBase')
+    @ApiParam({ name: 'user_id', description: 'Updating user id', example: '1' })
+    @ApiOperation({ summary: 'Update user' })
+    @UseGuards(JwtAuth0Guard, VerificationUserGuard)
+    @Patch(':user_id')
+    async updateUser(@Param('user_id') id: string, @Body() user: UpdateUserDto) {
+        const sub_id = await this.service.getSubIdFromUserId(id);
+        return this.service.updateInAuth0(id, sub_id, user);
+    }
+
+    @Override('replaceOneBase')
+    @ApiParam({ name: 'user_id', description: 'Replacing user id', example: '1' })
+    @ApiOperation({ summary: 'Replace user' })
+    @UseGuards(JwtAuth0Guard, VerificationUserGuard)
+    @Put(':user_id')
+    async replaceUser(@Param('user_id') id: string, @Body() user: UpdateUserDto) {
+        return this.updateUser(id, user);
     }
 }

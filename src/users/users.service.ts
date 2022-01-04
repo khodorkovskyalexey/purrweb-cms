@@ -1,14 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { TypeOrmCrudService } from '@nestjsx/crud-typeorm';
+import { Auth0Service } from 'src/auth0/auth0.service';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './dtos/create-user.dto';
+import { UpdateUserDto } from './dtos/update-user.dto';
 import { User } from './entities/users.entity';
 
 @Injectable()
 export class UsersService extends TypeOrmCrudService<User> {
     constructor(
-        @InjectRepository(User) repo: Repository<User>
+        @InjectRepository(User) repo: Repository<User>,
+        private readonly auth0Service: Auth0Service
     ) {
         super(repo);
     }
@@ -19,7 +22,13 @@ export class UsersService extends TypeOrmCrudService<User> {
         return createdUser;
     }
 
-    async update(user_id: string | number, userDto: CreateUserDto) {
+    async updateInAuth0(user_id: string | number, sub: string, userDto: UpdateUserDto) {
+        const res = await this.auth0Service.updateUser(sub, userDto);
+        console.log(res);
+        return await this.repo.update(user_id, userDto);
+    }
+
+    async updateFromAuth0(user_id: string | number, userDto: CreateUserDto) {
         return await this.repo.update(user_id, userDto);
     }
 
@@ -29,6 +38,11 @@ export class UsersService extends TypeOrmCrudService<User> {
 
     async findBySubId(sub_id: string, options = {}): Promise<User> {
         return await this.repo.findOne({ where: { sub_id }, ...options });
+    }
+
+    async getSubIdFromUserId(user_id: string | number) {
+        const user = await this.repo.findOne({ where: { id: user_id }, select: ['sub_id'] });
+        return user.sub_id;
     }
 
     checkRelevance(user1: CreateUserDto, user2: CreateUserDto): [boolean, Array<string>] {
