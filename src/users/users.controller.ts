@@ -70,7 +70,7 @@ export class UsersController implements CrudController<User> {
     @ApiOperation({ summary: 'Delete user' })
     @UseGuards(JwtAuth0Guard, VerificationUserGuard)
     @Delete(':user_id')
-    async deleteUser(@Param('user_id') id: string, @Body() user: UpdateUserDto) {
+    async deleteUser(@Param('user_id') id: string) {
         const sub_id = await this.service.getSubIdFromUserId(id);
         return this.service.deleteInAuth0(id, sub_id);
     }
