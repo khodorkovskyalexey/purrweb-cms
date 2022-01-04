@@ -19,11 +19,20 @@ export class UsersService extends TypeOrmCrudService<User> {
         return createdUser;
     }
 
+    async update(user_id: string | number, userDto: CreateUserDto) {
+        return await this.repo.update(user_id, userDto);
+    }
+
     async findByEmail(email: string, options = {}): Promise<User> {
         return await this.repo.findOne({ where: { email }, ...options });
     }
 
     async findBySubId(sub_id: string, options = {}): Promise<User> {
         return await this.repo.findOne({ where: { sub_id }, ...options });
+    }
+
+    checkRelevance(user1: CreateUserDto, user2: CreateUserDto): [boolean, Array<string>] {
+        const difference = CreateUserDto.compare(user1, user2);        
+        return [!difference.length, difference];
     }
 }

@@ -1,7 +1,6 @@
 import { Controller, Get, Req, UseGuards } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { Crud, CrudController } from '@nestjsx/crud';
-import { CreateUserDto } from './dtos/create-user.dto';
 import { UpdateUserDto } from './dtos/update-user.dto';
 import { User } from './entities/users.entity';
 import { UsersService } from './users.service';
@@ -23,21 +22,20 @@ import { JwtAuth0Guard } from 'src//guards/jwt-auth0.guard';
         }
     },
     dto: {
-        // create: CreateUserDto,
-        // update: UpdateUserDto,
-        // replace: UpdateUserDto,
+        update: UpdateUserDto,
+        replace: UpdateUserDto,
     },
     routes: {
-        exclude: ['createManyBase', 'createOneBase', 'recoverOneBase', 'deleteOneBase', 'updateOneBase', 'replaceOneBase'],
-        // replaceOneBase: {
-        //     decorators: [UseGuards(JwtAuthGuard, VerificationUserGuard ,HashPasswordGuard)],
-        // },
-        // updateOneBase: {
-        //     decorators: [UseGuards(JwtAuthGuard, VerificationUserGuard ,HashPasswordGuard)],
-        // },
-        // deleteOneBase: {
-        //     decorators: [UseGuards(JwtAuthGuard, VerificationUserGuard)],
-        // }
+        exclude: ['createManyBase', 'createOneBase', 'recoverOneBase'],
+        replaceOneBase: {
+            decorators: [UseGuards(JwtAuth0Guard, VerificationUserGuard)],
+        },
+        updateOneBase: {
+            decorators: [UseGuards(JwtAuth0Guard, VerificationUserGuard)],
+        },
+        deleteOneBase: {
+            decorators: [UseGuards(JwtAuth0Guard, VerificationUserGuard)],
+        }
     },
     query: {
         join: {

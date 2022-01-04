@@ -35,4 +35,14 @@ export class CreateUserDto extends UpdateUserDto{
         this.email_verified = model.email_verified;
         this.picture = model.picture;
     }
+
+    static compare(model1: any, model2: any): Array<string> {
+        const model1Dto = new CreateUserDto(model1);
+        const model2Dto = new CreateUserDto(model2);
+
+        let difference: Array<string> = [];
+        Object.keys(model1Dto).forEach(key => { if(model1Dto[key] !== model2Dto[key]) difference.push(key) });
+        
+        return difference;
+    }
 }
