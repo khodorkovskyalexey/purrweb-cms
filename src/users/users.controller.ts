@@ -40,12 +40,6 @@ import { JwtAuth0Guard } from 'src//guards/jwt-auth0.guard';
 export class UsersController implements CrudController<User> {
     constructor(public service: UsersService, public auth0service: Auth0Service) {}
 
-    @UseGuards(JwtAuth0Guard)
-    @Get('jwt')
-    async check(@Req() req: Request) {
-        return req.user;
-    }
-
     @Override('updateOneBase')
     @ApiParam({ name: 'user_id', description: 'Updating user id', example: '1' })
     @ApiOperation({ summary: 'Update user' })
