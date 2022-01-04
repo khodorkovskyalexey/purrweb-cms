@@ -10,7 +10,7 @@ export class User {
 
     @ApiProperty({ example: '123456', description: 'User id in Auth0 database' })
     @Column()
-    sub_id: string;
+    sub: string;
 
     @ApiProperty({ example: 'user@mail.ru', description: 'User email' })
     @Column({ nullable: false })

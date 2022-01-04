@@ -15,7 +15,10 @@ export class Auth0Service {
     }
 
     async updateUser(sub: string, userDto: UpdateUserDto): Promise<AxiosResponse<any, any>> {
-        const url = `${process.env.AUTH0_ISSUER_URL}/api/v2/users/auth0%7C${sub}`;
+        sub = sub.replace('|', '%7C'); // %7C - is | symbol
+        const url = `${process.env.AUTH0_ISSUER_URL}/api/v2/users/${sub}`;
+        console.log(url);
+        
         const res = await this.httpService.patch(url, userDto, {
             headers: { Authorization: `Bearer ${process.env.AUTH0_MGMT_ACCESS_TOKEN}` },
         }).toPromise();
@@ -24,16 +27,11 @@ export class Auth0Service {
     }
 
     async deleteUser(sub: string): Promise<AxiosResponse<any, any>> {
-        const url = `${process.env.AUTH0_ISSUER_URL}/api/v2/users/auth0%7C${sub}`;
+        sub = sub.replace('|', '%7C'); // %7C - is | symbol
+        const url = `${process.env.AUTH0_ISSUER_URL}/api/v2/users/${sub}`;
         const res = await this.httpService.delete(url, {
             headers: { Authorization: `Bearer ${process.env.AUTH0_MGMT_ACCESS_TOKEN}` },
         }).toPromise();
-        
         return res.data;
-    }
-
-    static getSubId(sub: string): string {
-        const subParsed = sub.split('|');  
-        return subParsed[1];
     }
 }

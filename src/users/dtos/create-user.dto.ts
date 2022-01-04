@@ -15,7 +15,7 @@ export class CreateUserDto extends UpdateUserDto{
 
     @ApiProperty({ example: '123456', description: 'User id in Auth0 database' })
     @IsString({ always: true })
-    sub_id: string;
+    sub: string;
 
     @ApiProperty({ example: 'true', description: 'Email in verified' })
     @IsBoolean({ always: true })
@@ -30,7 +30,7 @@ export class CreateUserDto extends UpdateUserDto{
 
     constructor(model: any = {}) {
         super(model);
-        this.sub_id = model.sub_id || Auth0Service.getSubId(model.sub);
+        this.sub = model.sub;
         this.email = model.email;
         this.email_verified = model.email_verified;
         this.picture = model.picture;

@@ -24,7 +24,7 @@ export class JwtAuth0Guard extends AuthGuard('jwt') {
             const userFromAuth0 = await this.auth0Service.getUser(req.headers.authorization);
             const user: CreateUserDto = new CreateUserDto(userFromAuth0);
             
-            let userFromDB: User = await this.usersService.findBySubId(user.sub_id);
+            let userFromDB: User = await this.usersService.findBySubId(user.sub);
             if(!userFromDB) {
                 userFromDB = await this.usersService.create(user);
             }
@@ -38,6 +38,8 @@ export class JwtAuth0Guard extends AuthGuard('jwt') {
             
             req.user = { id: userFromDB.id, ...user };
         } catch (error) {
+            console.log(error);
+            
             throw AuthException.UnauthorizedError();
         }
         return true;

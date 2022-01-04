@@ -40,13 +40,13 @@ export class UsersService extends TypeOrmCrudService<User> {
         return await this.repo.findOne({ where: { email }, ...options });
     }
 
-    async findBySubId(sub_id: string, options = {}): Promise<User> {
-        return await this.repo.findOne({ where: { sub_id }, ...options });
+    async findBySubId(sub: string, options = {}): Promise<User> {
+        return await this.repo.findOne({ where: { sub }, ...options });
     }
 
     async getSubIdFromUserId(user_id: string | number) {
-        const user = await this.repo.findOne({ where: { id: user_id }, select: ['sub_id'] });
-        return user.sub_id;
+        const user = await this.repo.findOne({ where: { id: user_id }, select: ['sub'] });
+        return user.sub;
     }
 
     checkRelevance(user1: CreateUserDto, user2: CreateUserDto): [boolean, Array<string>] {
