@@ -1,7 +1,7 @@
 import { Controller, UseGuards } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 import { Crud, CrudController } from "@nestjsx/crud";
-import { JwtAuthGuard } from "src/guards/jwt-auth.guard";
+import { JwtAuth0Guard } from "src/guards/jwt-auth0.guard";
 import { CreatePlaylistDto } from "./dtos/create-playlist.dto";
 import { UpdatePlaylistDto } from "./dtos/update-playlist.dto";
 import { Playlist } from "./entities/Playlist.entity";
@@ -20,16 +20,16 @@ import { PlaylistsService } from "./playlists.service";
     routes: {
         exclude: ['createManyBase'],
         createOneBase: {
-            decorators: [UseGuards(JwtAuthGuard, CheckPlaylistOwnerGuard)]
+            decorators: [UseGuards(JwtAuth0Guard, CheckPlaylistOwnerGuard)]
         },
         replaceOneBase: {
-            decorators: [UseGuards(JwtAuthGuard, CheckPlaylistOwnerGuard)]
+            decorators: [UseGuards(JwtAuth0Guard, CheckPlaylistOwnerGuard)]
         },
         updateOneBase: {
-            decorators: [UseGuards(JwtAuthGuard, CheckPlaylistOwnerGuard)]
+            decorators: [UseGuards(JwtAuth0Guard, CheckPlaylistOwnerGuard)]
         },
         deleteOneBase: {
-            decorators: [UseGuards(JwtAuthGuard, CheckPlaylistOwnerGuard)],
+            decorators: [UseGuards(JwtAuth0Guard, CheckPlaylistOwnerGuard)],
         },
     },
     params: {

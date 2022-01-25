@@ -6,6 +6,8 @@ import { ScreensModule } from './screens/screens.module';
 import { ContentsModule } from './contents/contents.module';
 import { PlaylistsModule } from './playlists/playlists.module';
 import { OrderModule } from './orders/orders.module';
+import { FilesModule } from './files/files.module';
+import { Auth0Module } from './auth0/auth0.module';
 
 @Module({
   imports: [
@@ -15,7 +17,9 @@ import { OrderModule } from './orders/orders.module';
     ScreensModule,
     PlaylistsModule,
     OrderModule,
-    ContentsModule
+    ContentsModule,
+    FilesModule,
+    Auth0Module
   ],
   controllers: [],
   providers: [],

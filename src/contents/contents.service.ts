@@ -18,14 +18,22 @@ export class ContentsService extends TypeOrmCrudService<Content> {
     super(repo);
   }
 
-  async create(fileDto: CreateContentDto): Promise<Content> {
-    const createdFile = await this.repo.create(fileDto);
-    await this.repo.save(createdFile);
-    return createdFile;
+  async createWithOrder(contentDto: CreateContentDto, contentData: ContentInBodyDto) {
+    const createdContent = await this.repo.create(contentDto);
+    await this.repo.save(createdContent);
+
+    contentData.content_id = createdContent.id;
+    const createdOrder = await this.ordersService.create(contentData);
+
+    return { createdContent, createdOrder };
   }
-  
-  async createArray(filesDto: Array<CreateContentDto>): Promise<Content[]> {
-    return await Promise.all(filesDto.map(async file => await this.create(file)));
+
+  async findById(content_id: string | number, options = {}): Promise<Content> {
+    return await this.repo.findOne(content_id, options);
+  }
+
+  async delete(content_id: string | number) {
+    return await this.repo.delete(content_id);
   }
 
   async setContent(playlist_id: string, content_id: string, orderDto: CreateOrderDto): Promise<Order> {

@@ -1,5 +1,6 @@
 import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
+import { Auth0Module } from "src/auth0/auth0.module";
 import { EventsModule } from "src/events/events.module";
 import { PlaylistsModule } from "src/playlists/playlists.module";
 import { ScreensModule } from "src/screens/screens.module";
@@ -15,6 +16,7 @@ import { OrdersService } from "./orders.service";
         ScreensModule,
         EventsModule,
         UsersModule,
+        Auth0Module
     ],
     controllers: [OrdersController],
     providers: [OrdersService],

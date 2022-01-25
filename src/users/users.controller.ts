@@ -1,15 +1,13 @@
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { Crud, CrudController } from '@nestjsx/crud';
-import { AuthUsersDto } from './dtos/auth-user.dto';
-import { CreateUserDto } from './dtos/create-user.dto';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Put, Req, UseGuards } from '@nestjs/common';
+import { ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
+import { Crud, CrudController, Override } from '@nestjsx/crud';
 import { UpdateUserDto } from './dtos/update-user.dto';
-import { HashPasswordGuard } from './guards/hash-password.guard';
-import { UniqueEmailGuard } from './guards/unique-email.guard';
 import { User } from './entities/users.entity';
 import { UsersService } from './users.service';
 import { VerificationUserGuard } from './guards/verification-user.guard';
-import { JwtAuthGuard } from 'src/guards/jwt-auth.guard';
+import { Auth0Service } from 'src/auth0/auth0.service';
+import { Request } from 'express';
+import { JwtAuth0Guard } from 'src//guards/jwt-auth0.guard';
 
 @ApiTags('User module')
 @Crud({
@@ -24,24 +22,11 @@ import { JwtAuthGuard } from 'src/guards/jwt-auth.guard';
         }
     },
     dto: {
-        create: CreateUserDto,
         update: UpdateUserDto,
         replace: UpdateUserDto,
     },
     routes: {
-        exclude: ['createManyBase'],
-        replaceOneBase: {
-            decorators: [UseGuards(JwtAuthGuard, VerificationUserGuard ,HashPasswordGuard)],
-        },
-        updateOneBase: {
-            decorators: [UseGuards(JwtAuthGuard, VerificationUserGuard ,HashPasswordGuard)],
-        },
-        createOneBase: {
-            decorators: [UseGuards(UniqueEmailGuard, HashPasswordGuard)],
-        },
-        deleteOneBase: {
-            decorators: [UseGuards(JwtAuthGuard, VerificationUserGuard)],
-        }
+        exclude: ['createManyBase', 'recoverOneBase'],
     },
     query: {
         join: {
@@ -53,12 +38,42 @@ import { JwtAuthGuard } from 'src/guards/jwt-auth.guard';
 })
 @Controller('users')
 export class UsersController implements CrudController<User> {
-    constructor(public service: UsersService) {}
-    
-    @ApiOperation({ summary: 'Login' })
-    @ApiResponse({ status: 200, type: [AuthUsersDto] })
-    @Post('login')
-    async login(@Body() userDto: CreateUserDto): Promise<AuthUsersDto> {
-        return this.service.login(userDto);
+    constructor(public service: UsersService, public auth0service: Auth0Service) {}
+
+    @Override('createOneBase')
+    @ApiOperation({ summary: 'Login in system (add account if not exists, updating data) and get profile finally' })
+    @UseGuards(JwtAuth0Guard)
+    @Post(':user_id')
+    async login(@Req() req: Request) {
+        return req.user;
+    }
+
+    @Override('updateOneBase')
+    @ApiParam({ name: 'user_id', description: 'Updating user id', example: '1' })
+    @ApiOperation({ summary: 'Update user' })
+    @UseGuards(JwtAuth0Guard, VerificationUserGuard)
+    @Patch(':user_id')
+    async updateUser(@Param('user_id') id: string, @Body() user: UpdateUserDto) {
+        const sub_id = await this.service.getSubIdFromUserId(id);
+        return this.service.updateInAuth0(id, sub_id, user);
+    }
+
+    @Override('replaceOneBase')
+    @ApiParam({ name: 'user_id', description: 'Replacing user id', example: '1' })
+    @ApiOperation({ summary: 'Replace user' })
+    @UseGuards(JwtAuth0Guard, VerificationUserGuard)
+    @Put(':user_id')
+    async replaceUser(@Param('user_id') id: string, @Body() user: UpdateUserDto) {
+        return this.updateUser(id, user);
+    }
+
+    @Override('deleteOneBase')
+    @ApiParam({ name: 'user_id', description: 'Deleting user id', example: '1' })
+    @ApiOperation({ summary: 'Delete user' })
+    @UseGuards(JwtAuth0Guard, VerificationUserGuard)
+    @Delete(':user_id')
+    async deleteUser(@Param('user_id') id: string) {
+        const sub_id = await this.service.getSubIdFromUserId(id);
+        return this.service.deleteInAuth0(id, sub_id);
     }
 }

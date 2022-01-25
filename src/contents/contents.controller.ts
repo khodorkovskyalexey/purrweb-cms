@@ -1,7 +1,9 @@
-import { Controller, UseInterceptors, UploadedFiles, Post, UploadedFile, Body, Param } from '@nestjs/common';
+import { Controller, UseInterceptors, UploadedFiles, Post, UploadedFile, Body, Param, Delete } from '@nestjs/common';
 import { AnyFilesInterceptor, FileInterceptor } from '@nestjs/platform-express';
-import { ApiBody, ApiConsumes, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiConsumes, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Crud, CrudController, Override } from '@nestjsx/crud';
+import { CreateFileDto } from 'src/files/dto/create-file.dto';
+import { FilesService } from 'src/files/files.service';
 import { CreateOrderDto } from 'src/orders/dtos/create-order.dto';
 import { Order } from 'src/orders/entities/order.entity';
 import { OrdersService } from 'src/orders/orders.service';
@@ -32,6 +34,9 @@ import { Content } from './entities/content.entity';
       orders: {
         eager: true,
       },
+      files: {
+        eager: true,
+      },
     }
   }
 })
@@ -40,39 +45,88 @@ import { Content } from './entities/content.entity';
 export class ContentsController implements CrudController<Content> {
   constructor(
     public readonly service: ContentsService,
-    public readonly ordersService: OrdersService
+    public readonly ordersService: OrdersService,
+    public readonly filesService: FilesService
   ) {}
   
   @Override('createManyBase')
   @ApiConsumes('multipart/form-data')
+  @ApiOperation({ summary: 'Upload some files in new content' })
   @Post()
   @UseInterceptors(AnyFilesInterceptor())
   async uploadFiles(
     @UploadedFiles() files: Array<Express.Multer.File>,
     @Body() contentData: ContentInBodyDto
   ) {
-    const filesDto: Array<CreateContentDto> = CreateContentDto.parseArrayFiles(files);
-    const createdContent = await this.service.createArray(filesDto);
-    const content_ids = createdContent.map(content => content.id);
-    const createdOrders = await this.ordersService.createArray(contentData, content_ids);
+    const contentsDto: CreateContentDto = new CreateContentDto(contentData);
+    const contentWithOrder = await this.service.createWithOrder(contentsDto, contentData);
     
-    return { createdContent, createdOrders }
+    const filesDto: Array<CreateFileDto> = CreateFileDto.parseArrayFiles(files);
+    const createdFiles = await Promise.all(
+      filesDto.map(async file => await this.filesService.create(file, contentWithOrder.createdContent))
+    );
+    
+    return { ...contentWithOrder.createdContent, order: contentWithOrder.createdOrder, files: createdFiles }
   }
 
   @Override('createOneBase')
   @ApiConsumes('multipart/form-data')
+  @ApiOperation({ summary: 'Upload one file in new content' })
   @Post()
   @UseInterceptors(FileInterceptor('file'))
   async uploadFile(
     @UploadedFile() file: Express.Multer.File,
     @Body() contentData: ContentInBodyDto
   ) {
-    const fileDto: CreateContentDto = CreateContentDto.parseFile(file);
-    const createdContent = await this.service.create(fileDto);
-    contentData.content_id = createdContent.id;
-    const createdOrder = await this.ordersService.create(contentData);
-    
-    return { ...createdContent, order: createdOrder }
+    const contentsDto: CreateContentDto = new CreateContentDto(contentData);
+    const contentWithOrder = await this.service.createWithOrder(contentsDto, contentData);
+
+    const fileDto: CreateFileDto = CreateFileDto.parseFile(file);
+    const createdFile = await this.filesService.create(fileDto, contentWithOrder.createdContent);
+
+    return { ...contentWithOrder.createdContent, order: contentWithOrder.createdOrder, file: createdFile }
+  }
+
+  @ApiParam({ name: 'content_id', description: 'Content id', example: '1' })
+  @ApiConsumes('multipart/form-data')
+  @ApiOperation({ summary: 'Upload one file in exists content' })
+  @Post(':content_id')
+  @UseInterceptors(FileInterceptor('file'))
+  async addFile(
+    @UploadedFile() file: Express.Multer.File,
+    @Param('content_id') content_id: string
+  ) {
+    const content = await this.service.findById(content_id);
+    const fileDto: CreateFileDto = CreateFileDto.parseFile(file);
+    const createdFile = await this.filesService.create(fileDto, content);
+    return { ...content, file: createdFile }
+  }
+
+  @ApiParam({ name: 'content_id', description: 'Content id', example: '1' })
+  @ApiConsumes('multipart/form-data')
+  @ApiOperation({ summary: 'Upload some files in exists content' })
+  @Post(':content_id/bulk')
+  @UseInterceptors(AnyFilesInterceptor())
+  async addFiles(
+    @UploadedFiles() files: Array<Express.Multer.File>,
+    @Param('content_id') content_id: string
+  ) {
+    const content = await this.service.findById(content_id);
+    const filesDto: Array<CreateFileDto> = CreateFileDto.parseArrayFiles(files);
+    const createdFiles = await Promise.all(
+      filesDto.map(async file => await this.filesService.create(file, content))
+    );
+    return { ...content, files: createdFiles }
+  }
+
+  @Override('deleteOneBase')
+  @ApiConsumes('multipart/form-data')
+  @ApiOperation({ summary: 'Delete content' })
+  @Delete(':content_id')
+  async deleteOne(@Param('content_id') content_id: string) {
+    const content = await this.service.findById(content_id, { relations: ['files'] });
+    await Promise.all(content.files.map(async file => await this.filesService.delete(file.id)));
+    return await this.service.delete(content_id);
   }
 
   @ApiParam({ name: 'playlist_id', description: 'Playlist id', example: '1' })

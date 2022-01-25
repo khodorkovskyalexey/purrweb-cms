@@ -1,33 +1,56 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { TypeOrmCrudService } from '@nestjsx/crud-typeorm';
+import { Auth0Service } from 'src/auth0/auth0.service';
 import { Repository } from 'typeorm';
-import { AuthService } from './auth.service';
-import { AuthUsersDto } from './dtos/auth-user.dto';
 import { CreateUserDto } from './dtos/create-user.dto';
+import { UpdateUserDto } from './dtos/update-user.dto';
 import { User } from './entities/users.entity';
-import * as bcrypt from 'bcryptjs';
-import { AuthException } from 'src/exceptions/auth.exception';
 
 @Injectable()
 export class UsersService extends TypeOrmCrudService<User> {
     constructor(
         @InjectRepository(User) repo: Repository<User>,
-        private readonly authService: AuthService
+        private readonly auth0Service: Auth0Service
     ) {
         super(repo);
     }
 
-    async findByEmail(email: string): Promise<User> {
-        return await this.repo.findOne({ where: { email } });
+    async create(userDto: CreateUserDto) {
+        const createdUser: User = await this.repo.create(userDto);
+        await this.repo.save(createdUser);
+        return createdUser;
     }
 
-    async login(reqUserDto: CreateUserDto): Promise<AuthUsersDto> {
-        const user = await this.findByEmail(reqUserDto.email);
-        const isPasswordEquals = await bcrypt.compare(reqUserDto.password, user.password);
-        if(user && isPasswordEquals) {
-            return this.authService.generateResponse(user);
-        }
-        throw AuthException.UnauthorizedError();
+    async updateInAuth0(user_id: string | number, sub: string, userDto: UpdateUserDto) {
+        await this.auth0Service.updateUser(sub, userDto);
+        return await this.repo.update(user_id, userDto);
+    }
+
+    async deleteInAuth0(user_id: string | number, sub: string) {
+        await this.auth0Service.deleteUser(sub);
+        return await this.repo.delete(user_id);
+    }
+
+    async updateFromAuth0(user_id: string | number, userDto: CreateUserDto) {
+        return await this.repo.update(user_id, userDto);
+    }
+
+    async findByEmail(email: string, options = {}): Promise<User> {
+        return await this.repo.findOne({ where: { email }, ...options });
+    }
+
+    async findBySubId(sub: string, options = {}): Promise<User> {
+        return await this.repo.findOne({ where: { sub }, ...options });
+    }
+
+    async getSubIdFromUserId(user_id: string | number) {
+        const user = await this.repo.findOne({ where: { id: user_id }, select: ['sub'] });
+        return user.sub;
+    }
+
+    checkRelevance(user1: CreateUserDto, user2: CreateUserDto): [boolean, Array<string>] {
+        const difference = CreateUserDto.compare(user1, user2);        
+        return [!difference.length, difference];
     }
 }

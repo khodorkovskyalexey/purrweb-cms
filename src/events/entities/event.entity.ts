@@ -3,7 +3,7 @@ import { Screen } from "src/screens/entities/Screen.entity";
 import { User } from "src/users/entities/users.entity";
 import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
-@Entity()
+@Entity({ name: "event" })
 export class Event {
     @ApiProperty({ example: '1', description: 'Event id' })
     @PrimaryGeneratedColumn()

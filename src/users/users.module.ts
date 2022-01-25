@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AuthService } from './auth.service';
 import { UsersController } from './users.controller';
 import { User } from './entities/users.entity';
 import { UsersService } from './users.service';
+import { Auth0Module } from 'src/auth0/auth0.module';
 
 @Module({
   imports: [
@@ -14,10 +14,11 @@ import { UsersService } from './users.service';
       signOptions: {
         expiresIn: "8h"
       }
-    })
+    }),
+    Auth0Module
   ],
   controllers: [UsersController],
-  providers: [UsersService, AuthService],
-  exports: [UsersService, AuthService, JwtModule],
+  providers: [UsersService],
+  exports: [UsersService, JwtModule],
 })
 export class UsersModule {}
